@@ -1,0 +1,429 @@
+<h2>#SETUP</h2>
+
+the directory structure of your app is entirelly up to your projects need or your personal preference. for simplicity the examples in this page will be based on the structure below
+<br>
+<br>
+<pre class="prettyprint linenums bg-code">
+    |-assets
+    |--css
+    |---style.css
+    |--img
+    |--js
+    |---fn.js
+    |---main.js
+    |---routes.js
+    |--libs 
+    |---walkify
+    |----walkify.js
+    |--views
+    |---home.html
+    |---about.html
+    |---contact
+    |-index.html
+</pre>
+<!-- <img class="img code-img" src="assets/img/folder-structure.png"> -->
+<br>
+your index.html should look like the content of the below image
+<br>
+<pre class="prettyprint linenums bg-code">
+&lt!DOCTYPE html>
+&lt;html&gt;
+    &lt;head&gt;
+        &lt;meta charset="utf-8"&gt;
+        &lt;meta http-equiv="X-UA-Compatible" content="IE=edge"&gt;
+        &lt;title&gt;walkify app&lt;/title&gt;
+        &lt;meta name="viewport" content="width=device-width, initial-scale=1"&gt;
+        &lt;link rel="stylesheet" href="assets css&#47;style.css"&gt;
+        &lt;script src="assets/js/fn.js"&gt;&lt;/script&gt;
+        &lt;script src="assets/libs/walkify/walkify.js"&gt;&lt;/script&gt;
+        &lt;script src="assets/js/routes.js"&gt;&lt;/script&gt;
+        &lt;script src="assets/js/main.js"&gt;&lt;/script&gt;
+    &lt;/head&gt;
+    &lt;body&gt;
+        &lt;section&gt;
+            &lt;template for="index"&gt;
+                &lt;h1&gt;  hello &#36;{{ audience.testing[0] }} &lt;/h1&gt; 
+            &lt;/template&gt;
+            &lt;template for="404"&gt;
+                &lt;h1&gt; &#36;{{errorMsg}} &lt;/h1&gt; 
+            &lt;/template&gt;
+        &lt;/section&gt;
+        &lt;div class="app"&gt;&lt;/div&gt;
+    &lt;/body&gt;
+&lt;/html&gt;
+</pre>
+
+<br>
+the element with the classname of app will be the element to hold all your views.
+
+navigate to your routes.js and add the below code
+<br>
+<pre class="prettyprint linenums bg-code">
+    const routes = {
+        '/' : {
+            matched(){
+                let template = "&lt;h1&gt; Hello world &lt;/h1&gt;"
+                this.view(null, template);
+            },
+        },
+    }
+</pre>
+<br>
+
+your main.js should have the code below 
+<br>
+<pre class="prettyprint linenums bg-code">
+    const router = new Walkify(routes);
+    router.mount('.app');
+</pre>
+
+<br>
+if you run your index.html page with live server (recommended) or open it with a browser you should be greated with the below message.
+
+<br>
+<img class="img code-img" src="assets/img/preview1.png">
+
+<br>
+<h2>#TEMPLATES</h2>
+
+a template in walkify is any valid string gotten from the DOM, declared within the route object or fetched from an external page.
+
+there are two types of of template in walkify
+<br><br>
+<b>- inline template : </b> this is a text within a template tag in the DOM which links too a route object in your routes.js
+
+e.g
+<br>
+<pre class="prettyprint linenums bg-code">
+    &lt;body&gt;
+        &lt;section&gt;
+            &lt;template for="index"&gt;
+                &lt;h1&gt; Greetings From Inline template &lt;/h1&gt; 
+            &lt;/template&gt;
+        &lt;/section&gt;
+        &lt;div class="app"&gt;&lt;/div&gt;
+    &lt;/body&gt;
+</pre>
+<br>
+the linking is done withe the html for attribute and the name property in the corresponding route property.
+<br>
+<pre class="prettyprint linenums bg-code">
+    const routes = {
+        '/' : {
+            name : 'index',
+            matched(){
+                this.view();
+            },
+        },
+    }
+</pre>
+<br>
+the name property above maps the route object to an inline template whose <b>'for'</b> attribute matches its value.
+<br>
+<br>
+<b>- external template : </b> these are strings whose source is not an html template tag.
+this could be a page/text fetched with ajax or a javascript string.
+
+the name property in route Object property will be ignored when working with external template. 
+<pre class="prettyprint linenums bg-code">
+    const routes = {
+        '/' : {
+            matched(){
+                let template = "Greetings From External Template";
+                this.view(null, template);
+            },
+        },
+    }
+</pre>
+<br>
+
+
+you might have noticed two methods in our earlier examples.
+<br><br>
+<b>- this.view(dataObject?, template?) : </b> this method accepts two arguments the first one is a dataObject while the second one is an external template. walkify ignores inline template when the second argument is passed
+<br>
+<b> - matched </b> will be treated in later sections.
+
+<h2>#template vars </h2>
+
+walkify has support for template variable, meaning that you can declare a variable in your template and the value will be added when <b>this.view</b> method is called with the first parameter 
+e.g 
+
+<br><br>
+<pre class="prettyprint linenums bg-code">
+    const routes = {
+        '/' : {
+            matched(){
+                let data = {
+                    audience : 'world',
+                    greetings : ['hello', 'hey']
+                };
+                let template = "&lt;h1&gt; &#36;{{greetings[0]}} &#36;{{audience}} &lt;/h1&gt;";
+                this.view(data, template);
+            },
+        },
+    }
+</pre>
+<br>
+
+internally walkify maps the value of the property in the data object passed to the view method to the variable in the template.
+
+<h2>#Routes Object</h2>
+
+this is an object containing all the routes needed by your app as properties.
+ in examples here our routes object is declared in routes.js
+ <br><br>
+ a routeObject for a 3page single page app will look something below
+
+ <br>
+<pre class="prettyprint linenums bg-code">
+    const routes = {
+        '/' : {
+            matched(){
+                fetch('views/home.html')
+                .then((res) => {
+                    return res.text();
+                }).then((template) => {
+                    this.view(null, template);
+                })
+            },
+        },
+        '/about' : {
+            matched(){
+                fetch('views/about.html')
+                .then((res) => {
+                    return res.text();
+                }).then((template) => {
+                    this.view(null, template);
+                })
+            },
+        },
+        '/contact' : {
+            matched(){
+                fetch('views/contact.html')
+                .then((res) => {
+                    return res.text();
+                }).then((template) => {
+                    this.view(null, template);
+                })
+            },
+        },
+    }  
+</pre>
+
+<h2>#Dynamic Matches</h2>
+walkify supports dynamic matches, where you specify route name with a valid regular expression.
+syntax below
+<pre class="prettyprint linenums bg-code">
+    '/pathname/{regexname:validregex}' : {
+        matched(res, regexname){
+
+        }
+    }
+</pre>
+an example below
+<pre class="prettyprint linenums bg-code">
+    /*
+    /* support for dynamic match using regex.
+    /* the below route will match something like '/home/9/test/foo' 
+    */
+    
+    '/home/{id:[0-9]+}/test/{name:[a-z]+}' : {
+        matched(res, id, name){
+            //id and name will be the values captured by regular expression
+            let data = {
+                id,
+                name
+            };
+            this.view(data);
+        },
+    },
+</pre>
+ you can also match a route based on the string that starts it
+
+ <pre class="prettyprint linenums bg-code">
+     //this will match all routes beginning with '/pathname/' then followed by anything
+    '/pathname/*' : {
+        matched(res, regexname){
+
+        }
+    }
+</pre>
+when there is a case like below, all three routes will be matched when the url is '/pathname/slug/category'
+<pre class="prettyprint linenums bg-code">
+   '/pathname/*' : {
+       matched(res){
+
+       }
+   },
+   '/pathname/slug/category' : {
+    matched(res){
+
+    },
+    '/pathname/slug/*' : {
+        matched(res){
+ 
+        }
+    }
+</pre>
+<h2>#hooks</h2>
+
+hooks are specific methods of the routes Object recognized by walkify. walkify calls those method when some actions are been performed by your app.
+<br>
+<pre class="prettyprint linenums bg-code">
+    '/' : {
+        matched(){
+            //this is called when the url matches this route
+        },
+        mount(){
+            //this is called when the DOM is ready
+        },
+        exist(){
+            //this is called before switching to another route
+        }
+    },
+</pre>
+<br>
+there are three hooks in walkify
+<br>
+<br>
+
+
+<b> - matched : </b> when walkify matches a route property in route Object it looks for this hook inside it and executes it. this is the only compulsory hook in your app. your app throws an error when tis absent.
+<br>
+
+the first parameter in routeObject is response object. it contains helpful info such absent
+the current url and previous url inside as the value of the property url.
+<br>
+
+<b> -params : </b> this contains all the get variables in the current page.
+
+a response object for a page e.g '/docs?page=docs' will look like below
+
+<br>
+<pre class="prettyprint linenums bg-code">
+    {
+        params : {
+            page : "docs"
+        },
+        url : {
+            to : "/docs?page=docs",
+            from : ""
+        }
+    }
+</pre>
+  <br>
+
+<b> - mount : </b> walkify calls this hook only if it is available when the dom is ready manipulated
+<br>
+<b> - exist : </b> walkify calls this hook only if it is available when cuurent view is been removed.
+
+
+<h2>#redirection</h2>
+there are two types of redirection in walkify
+<br>
+<b>-route redirection : </b> this is also known as full page redirection becose it redirects fully therevy changing the url in the address bar. use <b>router.routeTo(routename)</b> to perform this type of redirection.
+
+<br>
+<pre class="prettyprint linenums bg-code">
+    router.routeTo('/admin/login');
+</pre>
+<!-- <img class="img code-img" src="assets/img/redirection1.png"><br> -->
+
+-view redirection : this simply calls the matched method of the route name that was passed. the second argument is the data object to be used. this type of redirection doesnt changeg the url. use <b>router.redirectTo(routename, data?)</b> to perform this type of redirection.
+the data parameter if passed will be used instead of the data in the specified routename.
+<pre class="prettyprint linenums bg-code">
+    //redirect view to 404 page 
+    router.redirectTo('!', data);
+</pre>
+
+<br>
+<pre class="prettyprint linenums bg-code">
+    const routes = {
+        '/' : {
+            matched(){
+                let template = "HomePage";
+                this.view(null, template);
+            }
+        },
+        '/admin' : {
+            matched(){
+                //change these variables to see the effect
+                let isAdmin = true;
+                let isLoggedIn = false;
+                if(isAdmin && !isLoggedIn ){
+                    //force a full redirect
+                    router.routeTo('/admin/login');
+                } else if( !isAdmin ){
+                    let data = {
+                        errorMsg : "you do not have access to this page",
+                    }
+                    //redirect view to 404 page with a custom error message passed to the data object
+                    router.redirectTo('!', data);
+                } else {
+                    let template = "Admin Page";
+                    this.view(null, template);
+                }
+            },
+        },
+        '/admin/login' : {
+            matched(){
+                let template = "Login Page";
+                this.view(null, template);
+            },
+        },
+        '!' : {
+            name : '404',
+            matched(){
+                let data = {
+                    errorMsg : "Something went wrong",
+                }
+                let template = "&lt;h1&gt; &#36;{{errorMsg}} &lt;/h1&gt;";
+                this.view(data, template);
+            }
+        }
+    }
+</pre>
+
+
+<h2>#404 page</h2>
+
+to register a 404 page using external template, simple add a property '!' in your routes object e.get
+<br>
+<pre class="prettyprint linenums bg-code">
+    '!' : {
+        matched(){
+            let data = {
+                errorMsg : "Page Not Found",
+            }
+            let template = "&lt;h1&gt; &#36;{{errorMsg}} &lt;/h1&gt;";
+            this.view(data, template);
+        }
+    }
+</pre>
+
+walkify looks for this and redirect none registered views to it. in a situation where by 404 is not registered it will simply ignore
+
+
+<h2>#misc</h2>
+    <b>- setPrefix : </b> this changes/removes the default dollar sign to any symbol passed or removes it if false or empty string is passed
+    <br>
+    <b> - setVariableBrackets(brackets) : </b> accepts an array of your preferred symbol as an argument 
+    <br>
+    <br>
+    <pre class="prettyprint linenums bg-code">
+        const router = new Walkify(routes);
+        // changes the dollar sign ($) for variables to '@';
+
+        router.setPrefix('@');
+        /*
+        use 'router.setPrefix(false)' to remove it entirely
+
+        */
+        //changes the double curly braces to only one single brace
+
+        router.setVariableBrackets(['{', '}']);
+
+
+        router.mount('.app');
+    </pre>
