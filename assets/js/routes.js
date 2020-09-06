@@ -5,7 +5,13 @@ const routes = {
             document.title = "walkifyjs - demo";
             let data = {
                 title : '&lt;/Walkifyjs&gt;',
-                description : "Walkifyjs is an intuitive modern light weight javascript library for building small scale single page applications"
+                description : "Walkifyjs is an intuitive modern light weight javascript library for building small scale single page applications",
+                test : [
+                    {
+                        msg : 'hello'
+                    },
+                    'perfect'
+                ]
             };
             fetch('views/index.html')
             .then((res) => {
@@ -49,6 +55,9 @@ const routes = {
         },
         mounted(){
             prettyPrint();
+        },
+        exist(){
+            showLoader();
         }
     },
 
