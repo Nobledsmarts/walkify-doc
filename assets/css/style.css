@@ -230,7 +230,7 @@ code.js-code-example, code.html-code-example{
     padding: 10px 50px;
     font-size: 1.2rem;
     background: #1a57c5;
-    transition: all 500 ease !important;
+    transition: all 500ms ease;
     font-weight: bold;
     border: 2px solid transparent;
     text-decoration: none;
@@ -253,7 +253,7 @@ code.js-code-example, code.html-code-example{
     color : #000;
     border: 2px solid #000;
     background: #fff;
-    transition: all 500 ease;
+
 }
 img{
     max-width: 100%;
