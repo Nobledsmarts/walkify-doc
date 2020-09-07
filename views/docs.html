@@ -1,6 +1,6 @@
 <h2>#SETUP</h2>
 
-the directory structure of your app is entirelly up to your projects need or your personal preference. for simplicity the examples in this page will be based on the structure below
+the directory structure of your app is entirely up to your projects need or your personal preference. for simplicity the examples in this page will be based on the structure below
 <br>
 <br>
 <pre class="prettyprint linenums bg-code">
@@ -41,9 +41,6 @@ your index.html should look like the content of the below image
     &lt;/head&gt;
     &lt;body&gt;
         &lt;section&gt;
-            &lt;template for="index"&gt;
-                &lt;h1&gt;  hello &#36;{{ audience.testing[0] }} &lt;/h1&gt; 
-            &lt;/template&gt;
             &lt;template for="404"&gt;
                 &lt;h1&gt; &#36;{{errorMsg}} &lt;/h1&gt; 
             &lt;/template&gt;
@@ -105,7 +102,7 @@ e.g
     &lt;/body&gt;
 </pre>
 <br>
-the linking is done withe the html for attribute and the name property in the corresponding route property.
+the linking is done with the html <b> for </b> attribute and the name property in the corresponding route property.
 <br>
 <pre class="prettyprint linenums bg-code">
     const routes = {
@@ -289,11 +286,10 @@ there are three hooks in walkify
 <br>
 
 
-<b> - matched : </b> when walkify matches a route property in route Object it looks for this hook inside it and executes it. this is the only compulsory hook in your app. your app throws an error when tis absent.
+<b> - matched : </b> when walkify matches a route property in route Object it looks for this hook inside it and executes it. this is the only compulsory hook in your app. your app throws an error when it is absent.
 <br>
 
-the first parameter in routeObject is response object. it contains helpful info such absent
-the current url and previous url inside as the value of the property url.
+the first parameter in routeObject is response object. it contains helpful info such as the current url and previous url inside as the value of the property url.
 <br>
 
 <b> -params : </b> this contains all the get variables in the current page.
@@ -322,7 +318,7 @@ a response object for a page e.g '/docs?page=docs' will look like below
 <h2>#redirection</h2>
 there are two types of redirection in walkify
 <br>
-<b>-route redirection : </b> this is also known as full page redirection becose it redirects fully therevy changing the url in the address bar. use <b>router.routeTo(routename)</b> to perform this type of redirection.
+<b>-route redirection : </b> this is also known as full page redirection becose it redirects fully thereby changing the url in the address bar. use <b>router.routeTo(routename)</b> to perform this type of redirection.
 
 <br>
 <pre class="prettyprint linenums bg-code">
@@ -348,7 +344,7 @@ the data parameter if passed will be used instead of the data in the specified r
         },
         '/admin' : {
             matched(){
-                //change these variables to see the effect
+                //change the value of these variables to see the effect
                 let isAdmin = true;
                 let isLoggedIn = false;
                 if(isAdmin && !isLoggedIn ){
