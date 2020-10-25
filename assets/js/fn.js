@@ -1,21 +1,55 @@
+let d = document;
+let toTopCont = d.querySelector('.back-to-top');
+toTopCont.querySelector('.back-to-top-txt').addEventListener('click', (e) => {
+    __top();
+});
+window.addEventListener('scroll', function(){
+    if(window.pageYOffset  > d.documentElement.clientHeight){
+        toTopCont.classList.add('show');
+    }
+    else{
+        toTopCont.classList.remove('show');
+    }
+});
 function showLoader(){
-    document.getElementsByClassName('loader-container')[0].style.display = 'flex';
-    document.getElementsByClassName('app')[0].style.display = 'none';
+    d.querySelector('.loader-container').classList.remove('hide');
 }
 function hideLoader(){
-    document.getElementsByClassName('loader-container')[0].style.display = 'none';
-    document.getElementsByClassName('app')[0].style.display = 'block';
+    d.querySelector('.loader-container').classList.add('hide');
 }
-
-function formartComment (str, htmlclass){
-    let addComment = (str) => {
-        // console.log(JSON.stringify(str, 2));
-        return '<span class="' + htmlclass + '">' + str + '</span>';
-   }
-    str = str.replace(/\/\/(.+?)+/ig, addComment);
-    str = str.replace(/(\/\*)(.+?)\*\//igs, addComment);
-    return str;
+function __top(){
+    window.scroll({top : 0, behavior : 'smooth'});
 }
-///* 
-// mm 
-// */
+function doTypingEffect(){
+    let descriptions = [
+        'an intuitive modern light weight Javascript library for building small scale single page applications',
+        'an intuitive modern light weight Javascript library for building small scale SPA\'s',
+        'developed to be fast',
+        'framework agnostic',
+    ]
+    let descIdx = 0;
+    let textIdx = 0;
+    let isNegated = false;
+    let title = '';
+    window.typingEffect = window.setInterval(() => {
+        let currentText = descriptions[descIdx];
+        let descLen = descriptions.length;
+        let currentTextArr = currentText.split('');
+        let currentTextLen = currentText.length;
+        if(textIdx == currentTextLen || isNegated){
+            isNegated = true;
+            textIdx--;
+            title = currentText.slice(0, textIdx);
+            router.render({}, title, '.page-desc');
+            if(textIdx == 0){
+                isNegated = false;
+                descIdx++;
+            }
+        } else if(!isNegated){
+            title+= currentTextArr[textIdx];
+            router.render({}, title, '.page-desc');
+            textIdx++;
+        }
+        descIdx = descIdx == descLen ? 0 : descIdx;
+    }, 100);
+}

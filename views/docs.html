@@ -21,7 +21,6 @@ the directory structure of your app is entirely up to your projects need or your
     |---contact
     |-index.html
 </pre>
-<!-- <img class="img code-img" src="assets/img/folder-structure.png"> -->
 <br>
 your index.html should look like the content of the below image
 <br>
@@ -263,16 +262,17 @@ when there is a case like below, all three routes will be matched when the url i
         }
     }
 </pre>
-<h2>#hooks</h2>
+<h2>#Lifecycle hooks</h2>
 
 hooks are specific methods of the routes Object recognized by walkify. walkify calls those method when some actions are been performed by your app.
 <br>
 <pre class="prettyprint linenums bg-code">
     '/' : {
-        matched(){
+        matched(responseObject){
             //this is called when the url matches this route
+
         },
-        mount(){
+        mounted(){
             //this is called when the DOM is ready
         },
         exist(){
@@ -288,29 +288,25 @@ there are three hooks in walkify
 
 <b> - matched : </b> when walkify matches a route property in route Object it looks for this hook inside it and executes it. this is the only compulsory hook in your app. your app throws an error when it is absent.
 <br>
+this is the only method where the router view method is injected by the library and is available as 'this.view'
+<br>
 
-the first parameter in routeObject is response object. it contains helpful info such as the current url and previous url inside as the value of the property url.
+the first parameter in matched hook is response object. it contains helpful info such as the current url and previous url inside as the value of the property url.
+<br>
 <br>
 
 <b> -params : </b> this contains all the get variables in the current page.
-
-a response object for a page e.g '/docs?page=docs' will look like below
-
 <br>
-<pre class="prettyprint linenums bg-code">
-    {
-        params : {
-            page : "docs"
-        },
-        url : {
-            to : "/docs?page=docs",
-            from : ""
-        }
-    }
-</pre>
+<b> -loadtype : </b> this returns the browser load that triggered the current route. 
+<br>
+<b> -redirect : </b> returns true if the route is triggered by 'router.redirectTo' method
+<br>
+<b> note : </b> the object below is the response object of this page, you can refresh, add get queries to see how they update. click <a href="/docs?greetings=hello word&library=walkify"> here </a> for an example.
+<br>
+<pre class="prettyprint linenums bg-code">${{ responseObject }}</pre>
   <br>
 
-<b> - mount : </b> walkify calls this hook only if it is available when the dom is ready manipulated
+<b> - mounted : </b> walkify calls this hook only if it is available when the dom is ready manipulated
 <br>
 <b> - exist : </b> walkify calls this hook only if it is available when cuurent view is been removed.
 
@@ -326,7 +322,7 @@ there are two types of redirection in walkify
 </pre>
 <!-- <img class="img code-img" src="assets/img/redirection1.png"><br> -->
 
--view redirection : this simply calls the matched method of the route name that was passed. the second argument is the data object to be used. this type of redirection doesnt changeg the url. use <b>router.redirectTo(routename, data?)</b> to perform this type of redirection.
+-view redirection : this simply calls the matched method of the route name that was passed. the second argument is the data object to be used. this type of redirection doesnt change the url. use <b>router.redirectTo(routename, data?)</b> to perform this type of redirection.
 the data parameter if passed will be used instead of the data in the specified routename.
 <pre class="prettyprint linenums bg-code">
     //redirect view to 404 page 
@@ -400,8 +396,31 @@ to register a 404 page using external template, simple add a property '!' in you
 
 walkify looks for this and redirect none registered views to it. in a situation where by 404 is not registered it will simply ignore
 
-
 <h2>#misc</h2>
+    <b> -render </b> : this method is similiar to 'this.view' method that is available in matched hook, except that it is not limited to matched hook only. it can be called from any scope to render a string to the root view element or any element. it also accepts an optional third argument which determine the element to render the string to and uses 'querySelector' to look up the element.
+    <pre class="prettyprint linenums bg-code">
+        //rendering to the root view element
+        router.render({}, 'hello world');
+
+        //rendering to an element with an id of target
+        router.render({}, 'hello world', '#target');
+
+        //rendering to all span elements
+        router.render({}, 'hello world', 'span');
+    </pre>
+    <b>-route</b> : this method re-renders the current view
+    <pre class="prettyprint linenums bg-code">
+        //re-renders the current page without browser reload
+        router.route();
+        //equivalent to
+        router.routeTo(router.getHash());
+    </pre>
+    <br>
+    <b> -currentResponseObject  </b> : returns the response Object from any scope
+    <pre class="prettyprint linenums bg-code">
+        let responseObject = router.currentResponseObject;
+    </pre>
+    <br>
     <b>- setPrefix : </b> this changes/removes the default dollar sign to any symbol passed or removes it if false or empty string is passed
     <br>
     <b> - setVariableBrackets(brackets) : </b> accepts an array of your preferred symbol as an argument 
@@ -419,7 +438,6 @@ walkify looks for this and redirect none registered views to it. in a situation 
         //changes the double curly braces to only one single brace
 
         router.setVariableBrackets(['{', '}']);
-
 
         router.mount('.app');
     </pre>

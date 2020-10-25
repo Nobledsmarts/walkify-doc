@@ -11,13 +11,11 @@
     <link rel="stylesheet" href="assets/css/style.css">
 
     <link rel="shortcut icon" href="favicon.ico">
-    <script src="assets/js/fn.js"></script>
-    <script defer src="assets/libs/walkify/walkify.min.js"></script>
+    <script defer src="assets/js/fn.js"></script>
+    <script defer src="assets/libs/walkify/walkify.js"></script>
     <script defer src="assets/libs/prettify/prettify.js"></script>
     <script defer src="assets/js/routes.js"></script>
     <script defer src="assets/js/main.js"></script>
-
-    <!-- <title>walkify.js - demo</title> -->
 </head>
 <body>
     <header>
@@ -36,20 +34,25 @@
             <b>${{message}}</b>
         </template>
     </section>
+    <div class="loader-container">
+        <div class="loader"></div>
+        <h3>Loading...</h3>
+        <noscript>
+           <b class="error">
+               Sorry :( this page requires javascript
+            </b>
+        </noscript>
+    </div>
     <section class="main-content">
-        <div class="loader-container">
-            <div class="loader"></div>
-            <h3>Loading...</h3>
-            <noscript>
-               <b class="error">
-                   Sorry :( this page requires javascript
-                </b>
-            </noscript>
-        </div>
         <div id="app" class="app"></div>
     </section>
     <footer class="footer">
        &copy; Noble Desmarts 2020
+       <div class="back-to-top">
+            <div class="back-to-top-txt">
+              &laquo;
+            </div>
+       </div>
     </footer>
 </body>
 </html>

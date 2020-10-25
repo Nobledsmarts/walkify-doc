@@ -2,16 +2,10 @@ const routes = {
     '/' : {
         name : 'index',
         matched(resObj){
-            document.title = "walkifyjs - demo";
+            document.title = "walkifyjs";
             let data = {
                 title : '&lt;/Walkifyjs&gt;',
-                description : "Walkifyjs is an intuitive modern light weight javascript library for building small scale single page applications",
-                test : [
-                    {
-                        msg : 'hello'
-                    },
-                    'perfect'
-                ]
+                description : "an intuitive modern light weight javascript library for building small scale single page applications",
             };
             fetch('views/index.html')
             .then((res) => {
@@ -26,7 +20,11 @@ const routes = {
                 router.redirectTo('!', data);
             });
         },
+        mounted(){
+            doTypingEffect();
+        },
         exist(){
+            clearInterval(window.typingEffect);
             showLoader();
         }
     },
@@ -43,12 +41,13 @@ const routes = {
                 return res.text();
             }).then((template) => {
                 hideLoader();
-                // template = formartComment(template, 'comment');
-                this.view(null, template);
-            }).catch((e) => {
-                console.log(e);
                 let data = {
-                    message : e.message || "something went wrong"
+                    responseObject : JSON.stringify(resObj, '', '\t')
+                }
+                this.view(data, template);
+            }).catch((e) => {
+                let data = {
+                    message : e.message || "something went wrong",
                 }
                 router.redirectTo('!', data);
             });

@@ -1,9 +1,13 @@
+*{
+    box-sizing: border-box;
+}
 body, html {
     margin: 0;
     padding: 0;
     width: 100%;
-    min-height: 100vh;
+    min-height: 100%;
     background: #e3dddd;
+    background : #f2f0f3;
     font-family : sans-serif;
     font-size: 16px;
 }
@@ -11,23 +15,24 @@ body{
     display: flex;
     flex-direction: column;
     justify-content: space-between;
+
 }
 header{
-    position: fixed;
+    position: -webkit-sticky;
+    position: sticky;
     width: 100%;
     background: #9c27b0;
-    min-height: 5%;
+    flex-basis: 5%;
     top: 0;
-    z-index: 900;
+    z-index: 2900;
     box-shadow: 0px 0px 5px 1px rgba(0,0,0,0.2);
-
 }
 .nav{
     display: flex;
     align-items: center;
     justify-content: flex-end;
     width: 100%;
-    padding: 9px 0px;
+    padding: 9px 10px;
 }
 .brand{
     flex-basis: 10%;
@@ -62,28 +67,45 @@ header{
     background: #ffffffd6;
     color: rgb(57, 57, 230);  
 }
-
 .loader-container{
+    position: fixed;
+    /* height: 100vh; */
+    background: #fff;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 1000;
+    overflow-y: hidden;
     display: flex;
     justify-content: center;
     align-items: center;
     flex-direction: column;
+    opacity: 1;
+    will-change: display, height, opacity;
 }
 .main-content{
     width: 100%;
     position: relative;
-    /* min-height: 70%; */
-}
-.app, .loader-container{
-    min-height: 400px;
-    background: #fff;
-    margin: 100px 20% 50px;
-    box-shadow: 0px 0px 5px 1px rgba(0,0,0,0.1);
-    padding: 15px;
-    color: darkblue;
+    min-height: 80vh;
+    flex-basis: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 .app{
-    display: none;
+    min-height: 400px;
+    background: #fff;
+    width: 60%;
+    margin: 50px 20px;
+    box-shadow: 0px 0px 20px 1px rgba(0,0,0,0.1);
+    padding: 20px;
+    color: darkblue;
+    border-radius: 10px;
+    position: relative;
+}
+.app{
+    display: block;
 }
 .content-center{
     display: flex;
@@ -96,6 +118,20 @@ header{
     height: 230px;
     border-radius: 50%;
 }
+.page-desc-cursor{
+    color: blue;
+    animation: cursor 1s ease infinite forwards;
+    font-size: larger;
+    will-change: font-size;
+}
+@keyframes cursor{
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
 .matched{
     background: yellow;
     padding: 0px 4px;
@@ -103,10 +139,20 @@ header{
     display: inline-flex;
 }
 .content-container{
-    flex-direction: row;
+    display: flex;
+    flex-direction: column;
+    min-height: 300px;
+    position: relative;
+    margin: inherit;
 }
-.app{
-    display : none;
+.content-container .header{
+    flex-basis: 10%;
+}
+.content-container .contents{
+    flex-basis: 50%;
+}
+.content-container .cta-cont{
+    flex-basis: 40%;
 }
 .loader {
     border: 10px solid #f3f3f3;
@@ -131,17 +177,19 @@ header{
   }
   
 .footer{
-    background: black;
+    background: #07073a;
     min-height: 100px;
     color: #ccc;
     display: flex;
+    flex-basis: 10%;
     justify-content: center;
     align-items: center;
     border-top: 2px solid #9c27b0;
 }
 @media screen and (max-width: 631px){
-    .app, .loader-container{
-        margin: 100px 10%;
+    .app{
+        width: 95%;
+        margin: 50px 10px;
     }
     .user-image{
         width: 200px;;
@@ -170,8 +218,7 @@ header{
     color: #E91E63;
 }
 @media screen and (max-width: 400px){
-    .app, .loader-container{
-        margin: 150px 0% 50px !important;
+    .app{
         min-height: 60vh;
     }
     .nav-item a:link{
@@ -224,16 +271,18 @@ code.js-code-example, code.html-code-example{
     border: none;
     color: aliceblue;
     border-radius: 5px;
-    margin: 5px;
+    margin: 10px;
+    box-shadow : 0px 0px 14px 2px rgb(205 199 206 / 30%);
 }
 .cta-btn{
     padding: 10px 50px;
     font-size: 1.2rem;
     background: #1a57c5;
-    transition: all 500ms ease;
+    transition: all 500 ease !important;
     font-weight: bold;
     border: 2px solid transparent;
     text-decoration: none;
+
 }
 .cta-btn:hover{
     cursor: pointer;
@@ -246,14 +295,14 @@ code.js-code-example, code.html-code-example{
     font-size: 1.9rem;
 }
 .btn-dark{
-    background : #000;
+    background : #1f1f67;
     border: 2px solid transparent;
 }
 .btn-dark:hover{
-    color : #000;
-    border: 2px solid #000;
+    color :  #1f1f67;
+    border: 2px solid #1f1f67;
     background: #fff;
-
+    transition: all 500 ease;
 }
 img{
     max-width: 100%;
@@ -267,7 +316,6 @@ img{
     flex-flow: row wrap;
 
 }
-
 ol.linenums li .tag, ol.linenums li .kwd{
 color : #9cafec;
 }
@@ -285,4 +333,54 @@ ol.linenums li {
 }
 .pln{
     color: #d8d8e3;
+}
+@keyframes slide {
+    to {
+        opacity: 0.9;
+    }
+}
+@keyframes hide{
+    to {
+        opacity: 0;
+        transform: translateY(-100vh);
+        display: none;
+    }
+}
+.hide{
+    animation: slide 0ms ease, hide 1s ease forwards;
+}
+.back-to-top{
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    display: none;
+}
+.back-to-top-txt:hover{
+    cursor: pointer;
+}
+.back-to-top-txt{
+    transform: rotate(90deg);
+    display: inline-flex;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: linear-gradient(134deg, #ffffff 20%, #eceaed 69%);
+    justify-content: center;
+    align-items: center;
+    padding: 10px;
+    color: #060633 !important;
+    font-size: 20px;
+    box-shadow: 0px 0px 0px 13px rgb(156 39 176 / 39%);
+    animation: glow 1.5s cubic-bezier(0.08, 0.39, 0.86, 1.1) infinite;
+}
+.show {
+    display: block;
+}
+@keyframes glow{
+    100% {
+        box-shadow: 0px 0px 0px 10px rgb(156 39 176 / 21%);
+    }
+    0% {
+        box-shadow: 0px 0px 0px 3px #2a2a8fb8;
+    }
 }
