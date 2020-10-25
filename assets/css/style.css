@@ -24,7 +24,7 @@ header{
     background: #9c27b0;
     flex-basis: 5%;
     top: 0;
-    z-index: 2900;
+    z-index: 900;
     box-shadow: 0px 0px 5px 1px rgba(0,0,0,0.2);
 }
 .nav{
