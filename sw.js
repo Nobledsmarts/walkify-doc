@@ -1,6 +1,5 @@
 let cacheName = 'v1';
 self.addEventListener('activate', (e) => {
-    console.log('service worker activated');
     e.waitUntil(
         caches.keys().then(cacheNames => {
             return Promise.all(
@@ -14,7 +13,6 @@ self.addEventListener('activate', (e) => {
     )
 })
 self.addEventListener('fetch', e => {
-    console.log('fetch');
     e.respondWith(
         fetch(e.request)
         .then(res => {
