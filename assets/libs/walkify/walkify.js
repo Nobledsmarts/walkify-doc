@@ -85,20 +85,6 @@ class Walkify {
 						this.routeTo(linkHref);
 					}
 				})
-			} else if(link.hasAttribute('href') && !!link.getAttribute('href')) {
-				link.addEventListener('click', (event) => {
-					event.preventDefault();
-					if( !(/^((http|https|ftp):\/\/)(.+?)\.[a-z]{2,}$/ig.test(linkHref)) ){
-						try{
-							location.href = 'http://' + linkHref;
-						} catch(e){
-							'exist' in this.currentRoute && this.currentRoute.exist();
-							this.routeTo(linkHref);
-						}
-						return;
-					}
-					location.href = linkHref;
-				})
 			}
 		});
 	}
