@@ -20,36 +20,45 @@ function hideLoader(){
 function __top(){
     window.scroll({top : 0, behavior : 'smooth'});
 }
-function doTypingEffect(){
-    let descriptions = [
+function doTypingEffect(descIdx, textIdx, isNegated){
+    const descriptions = [
         'an intuitive modern light weight Javascript library for building small scale single page applications',
         'an intuitive modern light weight Javascript library for building small scale SPA\'s',
         'developed to be fast',
         'framework agnostic',
-    ]
-    let descIdx = 0;
-    let textIdx = 0;
-    let isNegated = false;
+    ];
+    const interval = 150;
+    const pause = 5000;
+    descIdx = descIdx || 0;
+    textIdx = textIdx || 0;
+    isNegated = isNegated || false;
     let title = '';
-    window.typingEffect = window.setInterval(() => {
+    window.typingEffect = setInterval(() => {
         let currentText = descriptions[descIdx];
         let descLen = descriptions.length;
         let currentTextArr = currentText.split('');
         let currentTextLen = currentText.length;
         if(textIdx == currentTextLen || isNegated){
             isNegated = true;
-            textIdx--;
             title = currentText.slice(0, textIdx);
-            router.render({}, title, '.page-desc');
             if(textIdx == 0){
                 isNegated = false;
                 descIdx++;
+            } else if(textIdx == currentTextLen){
+                clearInterval(typingEffect);
+                window.typingSetOut = setTimeout(() => {
+                    doTypingEffect(descIdx, textIdx, isNegated)
+                }, pause);
             }
+            router.render({}, title, '.page-desc');
+            textIdx--;
         } else if(!isNegated){
+            clearTimeout(window.typingSetOut);
+            textIdx = textIdx < 0 ? 0 : textIdx;
             title+= currentTextArr[textIdx];
             router.render({}, title, '.page-desc');
             textIdx++;
         }
         descIdx = descIdx == descLen ? 0 : descIdx;
-    }, 100);
+    }, interval);
 }

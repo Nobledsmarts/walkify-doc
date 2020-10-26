@@ -24,6 +24,7 @@ const routes = {
             doTypingEffect();
         },
         exist(){
+            clearTimeout(window.typingSetOut);
             clearInterval(window.typingEffect);
             showLoader();
         }
