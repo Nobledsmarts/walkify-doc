@@ -1,7 +1,7 @@
 /*
- * walkify.js
- * (c) Richard franklin C [Noble Desmarts]
- * august 2020
+ * @name walkify.js
+ * @author (c) Richard franklin C [Noble Desmarts]
+ * @month august 2020
 */
 class Walkify {
 	constructor(routesObj, viewElem){
@@ -13,20 +13,36 @@ class Walkify {
 		this.variableBracketsEnd = '}}';
 		this.variablePrefix = "\\$";
 		this.previousHash = '';
+		this.options = this.getDefaultOptions();
 		!!viewElem && this.mount(viewElem);
+	}
+	getDefaultOptions(){
+		return {
+			historyMode : false
+		}
+	}
+	setOptions(options){
+		let defaultOptions = this.getDefaultOptions();
+		this.options = {
+			...defaultOptions,
+			...options
+		};
 	}
 	init(){
 		window.onload = () => {
 			this.loadtype = 'onload';
-			this.navigate({
-				loadtype : 'onload'
-			});
+			this.navigate();
         }
-		window.onhashchange = () => {
-			this.loadtype = 'hashchange';
-			this.navigate({
-				loadtype : 'hashchange'
-			});
+		if(!this.getHistoryMode()) {
+			window.onhashchange = () => {
+				this.loadtype = 'hashchange';
+				this.navigate();
+			}
+		} else {
+			window.onpopstate = () => {
+				this.loadtype = 'popstate';
+				this.navigate();
+			}
 		}
 	}
 	 setMutationObserver(){
@@ -79,8 +95,14 @@ class Walkify {
 							location.href = linkHref;
 						}
 					}
-					linkHref = linkHref.startsWith('#') ? linkHref : '#' + linkHref;
-					if(location.hash != linkHref ){
+					let historyMode = this.getHistoryMode();
+					if(!historyMode){
+						linkHref = linkHref.startsWith('#') ? linkHref : '#' + linkHref;
+					} else {
+						linkHref = linkHref.startsWith('#') ? linkHref.slice(1) : linkHref;
+					}
+					let condition = !historyMode ? '#' + this.getHash() != linkHref : this.getHash() != linkHref;
+					if(condition){
 						'exist' in this.currentRoute && this.currentRoute.exist();
 						this.routeTo(linkHref);
 					}
@@ -95,38 +117,62 @@ class Walkify {
 			length : 0
 		};
 	}
-	navigate(options){
+	pushToSession(){
+		let appHistory = this.getAppHistoryObj().history;
+		appHistory.push(this.getHash());
+		sessionStorage.appHistoryObj = JSON.stringify({
+			history : appHistory,
+			current : appHistory.length - 1,
+			length : appHistory.length - 1
+		});
+	}
+	setSession(){
+		if(! sessionStorage.appHistoryObj ){
+			sessionStorage.appHistoryObj = JSON.stringify({
+				history : [this.getHash()],
+				current : 1,
+				length : 1
+			});
+		}
+	}
+	navigate(){
 		if(this.getHash()){
-			if(options.loadtype == 'hashchange'){
-				let appHistory = this.getAppHistoryObj().history;
-				appHistory.push(this.getHash());
-				sessionStorage.appHistoryObj = JSON.stringify({
-					history : appHistory,
-					current : appHistory.length - 1,
-					length : appHistory.length - 1
-				});
+			if(this.loadtype == 'hashchange'){
+				this.pushToSession();
+			}
+			else if(this.loadtype == 'popstate'){
+				'exist' in this.currentRoute && this.currentRoute.exist();
+				this.pushToSession();
 			} else {
-				if(! sessionStorage.appHistoryObj ){
-					sessionStorage.appHistoryObj = JSON.stringify({
-						history : [this.getHash()],
-						current : 1,
-						length : 1
-					});
-				}
+				this.setSession();
 			}
 			this.setPreviousHash();
-			this.route(options);
+			this.route();
 		} else {
 			this.routeTo('/');
 		}
 	}
 	getHash(url){
-		let urlhash = url ? '#' + url.split('#')[1] : location.hash;
-		return urlhash.slice(1) ? urlhash.slice(1) : '';
+		let historyMode = this.getHistoryMode();
+		if( !historyMode ){
+			let urlhash = url ? '#' + url.split('#')[1] : location.hash;
+			return urlhash.slice(1) ? urlhash.slice(1) : '';
+		}
+		return location.pathname;
 	}
 	routeTo(url){
+		let historyMode = this.getHistoryMode();
+		if(!historyMode) {
+			location.hash = url;
+		}
+		else{
+			history.pushState({}, '', url);
+			this.route();
+		}
 		this.setPreviousHash();
-		location.hash = url;
+	}
+	getHistoryMode(){
+		return this.options.historyMode;
 	}
 	setPreviousHash(){
 		let history = sessionStorage.appHistoryObj ? JSON.parse(sessionStorage.appHistoryObj).history : [];
@@ -196,7 +242,8 @@ class Walkify {
 		return this.getResponseObject({queryObject, hashPartArr, hashPart});
 	}
 	getRouteObject(url){
-		let hashUrl = url ? url.toLowerCase() : this.getHash().toLocaleLowerCase();
+		let historyMode = this.getHistoryMode();
+		let hashUrl = !historyMode ? (url ? url.toLowerCase() : this.getHash().toLocaleLowerCase()) : location.pathname + location.search;
 		let urlHasQuery = hashUrl.indexOf('?') != -1;
 		let queryObject = this.extractUrlQuery(hashUrl);
 		let hashPartArr = hashUrl.split('#');
@@ -512,7 +559,6 @@ class Walkify {
 		let targets = [... document.querySelectorAll(targetEl)];
 		if( targets.length ){
 			targets.forEach((target) => {
-				// console.log(template);
 				target.textContent = template;
 			});
 		}
@@ -533,7 +579,6 @@ class Walkify {
 	//changes the default curly braces '{{' and '}}'
 	setVariableBrackets(brackets){
 		if(this.typeof(brackets) != 'array'){
-			console.log(brackets);
 			throw new Error('parameter for setVariableBrackets method must be of the type Array')
 		} else if(brackets.length > 2){
 			throw new Error('array should not be greater than two');
