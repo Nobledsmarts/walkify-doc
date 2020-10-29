@@ -20,18 +20,81 @@
 <body>
     <header>
         <nav class="nav">
-            <div class="brand">
-                walkify.js
+            <div class="brand-toggler-cont">
+                <div class="brand">
+                    walkify.js
+                </div>
+                <div class="toggler-cont">
+                    <div class="toggler-block">
+                        <span class="toggler"></span>
+                    </div>
+                </div>
             </div>
-            <div class="nav-item" align="right">
-                <a href="/"> index </a>
-                <a href="/docs"> docs </a>
+            <div class="nav-item-cont">
+                <div class="holder">
+                    <div class="sm nav-title">
+                        PAGES
+                    </div>
+                    <ul class="nav-item">
+                        <li class="nav-item-list">
+                            <a href="/" class="section-to"> Home </a>
+                        </li>
+                        <li class="nav-item-list">
+                            <a href="/docs" class="section-to"> Documentation </a>
+                        </li>
+                    </ul>
+                    <div class="sm">
+                        <div class="nav-title">
+                            SECTIONS
+                        </div>
+                        <ul class="nav-item">
+                            <li class="nav-item-list">
+                                <a data-to="setup" class="section-to"> setup </a>
+                            </li>
+                            <li class="nav-item-list">
+                                <a data-to="templates" class="section-to"> templates </a>
+                            </li>
+                            <li class="nav-item-list">
+                                <a data-to="routes" class="section-to"> routes </a>
+                            </li>
+                            <li class="nav-item-list">
+                                <a data-to="dynamicmatch" class="section-to"> dynamic matches </a>
+                            </li>
+                            <li class="nav-item-list">
+                                <a data-to="hooks" class="section-to"> lifecycle hooks </a>
+                            </li>
+                            <li class="nav-item-list">
+                                <a data-to="redirection" class="section-to"> redirection </a>
+                            </li>
+                            <li class="nav-item-list">
+                                <a data-to="s404" class="section-to"> 404 page </a>
+                            </li>
+                            <li class="nav-item-list">
+                                <a data-to="misc" class="section-to"> misc </a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
             </div>
         </nav>
     </header>
     <section>
         <template for="404">
-            <b>${{message}}</b>
+            <div class="content-container">
+                <div class="content">
+                    <div class="header">
+                        <h1 class="page-title">
+                            ERROR
+                        </h1>
+                    </div>
+                    <div class="contents">
+                        <h3> 
+                            <b>${{message}}</b>
+                        </h3>
+                        <br>
+                    </div>
+                </div>
+            </div>
         </template>
     </section>
     <div class="loader-container">

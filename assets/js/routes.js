@@ -30,31 +30,29 @@ const routes = {
         }
     },
 
-
     '/docs' : {
-        matched(resObj){
+       async matched(resObj){
             document.title = "walkifyjs - documentation";
-            fetch('views/docs.html')
-            .then((res) => {
-                if(res.status == 404){
-                    throw new Error('couldnt fetch page');
+            let response = await fetch('views/docs.html');
+            if(!response.ok){
+                let data = {
+                    message : response.statusText
                 }
-                return res.text();
-            }).then((template) => {
+                router.redirectTo('!', data);
+            } else {
+                let template = await response.text().then(e => e);
                 hideLoader();
                 let data = {
                     responseObject : JSON.stringify(resObj, '', '\t')
                 }
                 this.view(data, template);
-            }).catch((e) => {
-                let data = {
-                    message : e.message || "something went wrong",
-                }
-                router.redirectTo('!', data);
-            });
+            }
         },
         mounted(){
             prettyPrint();
+            let res = router.currentResponseObject();
+            let scrollElement = res.state.scrollElement;
+            scrollElement && toSection(scrollElement);
         },
         exist(){
             showLoader();

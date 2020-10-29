@@ -27,23 +27,26 @@ class Walkify {
 			...defaultOptions,
 			...options
 		};
+		return this;
 	}
 	init(){
 		window.onload = () => {
+			console.log('load');
 			this.loadtype = 'onload';
-			this.navigate();
-        }
+			this.navigate()
+		}
 		if(!this.getHistoryMode()) {
 			window.onhashchange = () => {
 				this.loadtype = 'hashchange';
 				this.navigate();
 			}
 		} else {
-			window.onpopstate = () => {
+			window.onpopstate = (e) => {
 				this.loadtype = 'popstate';
 				this.navigate();
 			}
 		}
+		return this;
 	}
 	 setMutationObserver(){
 		let body = document.querySelector('body');
@@ -66,6 +69,7 @@ class Walkify {
 		}
 		this.observer = new MutationObserver(callback);
 		this.observer.observe(body, config);
+		return this;
 	 }
 	setLinksHandler(link){
 		let links = link ? [link] : [... document.getElementsByTagName('a')];
@@ -109,6 +113,7 @@ class Walkify {
 				})
 			}
 		});
+		return this;
 	}
 	getAppHistoryObj(){
 		return sessionStorage.appHistoryObj ? JSON.parse(sessionStorage.appHistoryObj) : {
@@ -125,6 +130,7 @@ class Walkify {
 			current : appHistory.length - 1,
 			length : appHistory.length - 1
 		});
+		return this;
 	}
 	setSession(){
 		if(! sessionStorage.appHistoryObj ){
@@ -134,6 +140,7 @@ class Walkify {
 				length : 1
 			});
 		}
+		return this;
 	}
 	navigate(){
 		if(this.getHash()){
@@ -151,6 +158,7 @@ class Walkify {
 		} else {
 			this.routeTo('/');
 		}
+		return this;
 	}
 	getHash(url){
 		let historyMode = this.getHistoryMode();
@@ -158,18 +166,25 @@ class Walkify {
 			let urlhash = url ? '#' + url.split('#')[1] : location.hash;
 			return urlhash.slice(1) ? urlhash.slice(1) : '';
 		}
-		return location.pathname;
+		return /(index.html|index.php)/.test(location.pathname) ? '/' : location.pathname;
 	}
-	routeTo(url){
+	routeTo(url, state = {}){
+		this.state = state;
 		let historyMode = this.getHistoryMode();
+		let response = this.currentResponseObject();
+		if(response.url.to == url) return;
+		
+		if(this.currentRoute && 'exist' in this.currentRoute) this.currentRoute.exist();
+	
 		if(!historyMode) {
 			location.hash = url;
 		}
 		else{
 			history.pushState({}, '', url);
-			this.route();
+			this.route(state);
 		}
 		this.setPreviousHash();
+		return this;
 	}
 	getHistoryMode(){
 		return this.options.historyMode;
@@ -181,6 +196,7 @@ class Walkify {
 		} else {
 			this.previousHash = history.slice(-2)[0];
 		}
+		return this;
 	}
 	redirectTo(url, redirectData){
 		let [, , hashPart] = Object.values(this.getRouteObject(url));
@@ -191,6 +207,7 @@ class Walkify {
 				this.checkDynamicRoute(true, redirectData);
 			}
 		}
+		return this;
 	}
 	getRoutes(){
 		return Object.keys(this.routes);
@@ -227,6 +244,7 @@ class Walkify {
 	getResponseObject(optionsObj){
 		let from = this.getPreviousHash();
 		return  {
+			state : this.state || {},
 			params : optionsObj.queryObject,
 			loadtype : this.loadtype,
 			url : {
@@ -339,9 +357,11 @@ class Walkify {
 				throw new Error('walkify expected hook "matched" not found!')
 			}
 		}
+		return this;
 	}
-	route(){
+	route(state){
 		let hashPart = this.getRouteObject().hashPart;
+		if(state && this.state != state) this.state = state; 
 		if(this.routes.hasOwnProperty(hashPart)){
 			this.checkNormalRoute();
 		} else {
@@ -550,10 +570,10 @@ class Walkify {
 		} else {
 			this.renderExternal(targetEl, template);
 		}
-		
 		//force dom redraw/update
 		this.redrawRoot();
 		this.setLinksHandler();
+		return this;
 	}
 	renderExternal(targetEl, template){
 		let targets = [... document.querySelectorAll(targetEl)];
@@ -575,6 +595,7 @@ class Walkify {
 			this.noVariablePrefix = true;
 		}
 		this.variablePrefix = '\\' + variablePrefix;
+		return this;
 	}
 	//changes the default curly braces '{{' and '}}'
 	setVariableBrackets(brackets){
@@ -588,6 +609,7 @@ class Walkify {
 			this.variableBracketsStart = brackets[0];
 			this.variableBracketsEnd = brackets[1];
 		}
+		return this;
 	}
 	typeof(variable){
 		return !!variable ? ((variable).constructor.name).toLowerCase() : (typeof variable);
@@ -597,5 +619,6 @@ class Walkify {
 		if( ! (root.innerHTML == this.viewElem.innerHTML) ){
 			root.innerHTML = this.viewElem.innerHTML;
 		}
+		return this;
 	}
 }

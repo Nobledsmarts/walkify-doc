@@ -1,4 +1,5 @@
-<h2>#SETUP</h2>
+<div class="content-container docs">
+<h2 id="setup">#SETUP</h2>
 
 the directory structure of your app is entirely up to your projects need or your personal preference. for simplicity the examples in this page will be based on the structure below
 <br>
@@ -80,7 +81,7 @@ if you run your index.html page with live server (recommended) or open it with a
 <img class="img code-img" src="assets/img/preview1.png">
 
 <br>
-<h2>#TEMPLATES</h2>
+<h2 id="templates">#TEMPLATES</h2>
 
 a template in walkify is any valid string gotten from the DOM, declared within the route object or fetched from an external page.
 
@@ -164,14 +165,14 @@ e.g
 
 internally walkify maps the value of the property in the data object passed to the view method to the variable in the template.
 
-<h2>#Routes Object</h2>
+<h2 id="routes">#Routes Object</h2>
 
 this is an object containing all the routes needed by your app as properties.
- in examples here our routes object is declared in routes.js
- <br><br>
- a routeObject for a 3page single page app will look something below
+in examples here our routes object is declared in routes.js
+<br><br>
+a routeObject for a 3page single page app will look something below
 
- <br>
+<br>
 <pre class="prettyprint linenums bg-code">
     const routes = {
         '/' : {
@@ -207,7 +208,7 @@ this is an object containing all the routes needed by your app as properties.
     }  
 </pre>
 
-<h2>#Dynamic Matches</h2>
+<h2 id="dynamicmatch">#Dynamic Matches</h2>
 walkify supports dynamic matches, where you specify route name with a valid regular expression.
 syntax below
 <pre class="prettyprint linenums bg-code">
@@ -235,10 +236,10 @@ an example below
         },
     },
 </pre>
- you can also match a route based on the string that starts it
+you can also match a route based on the string that starts it
 
- <pre class="prettyprint linenums bg-code">
-     //this will match all routes beginning with '/pathname/' then followed by anything
+<pre class="prettyprint linenums bg-code">
+    //this will match all routes beginning with '/pathname/' then followed by anything
     '/pathname/*' : {
         matched(res, regexname){
 
@@ -247,22 +248,22 @@ an example below
 </pre>
 when there is a case like below, all three routes will be matched when the url is '/pathname/slug/category'
 <pre class="prettyprint linenums bg-code">
-   '/pathname/*' : {
-       matched(res){
+'/pathname/*' : {
+    matched(res){
 
-       }
-   },
-   '/pathname/slug/category' : {
+    }
+},
+'/pathname/slug/category' : {
     matched(res){
 
     },
     '/pathname/slug/*' : {
         matched(res){
- 
+
         }
     }
 </pre>
-<h2>#Lifecycle hooks</h2>
+<h2 id="hooks">#Lifecycle hooks</h2>
 
 hooks are specific methods of the routes Object recognized by walkify. walkify calls those method when some actions are been performed by your app.
 <br>
@@ -304,21 +305,27 @@ the first parameter in matched hook is response object. it contains helpful info
 <b> note : </b> the object below is the response object of this page, you can refresh, add get queries to see how they update. click <a href="/docs?greetings=hello word&library=walkify"> here </a> for an example.
 <br>
 <pre class="prettyprint linenums bg-code">${{ responseObject }}</pre>
-  <br>
+<br>
 
 <b> - mounted : </b> walkify calls this hook only if it is available when the dom is ready manipulated
 <br>
 <b> - exist : </b> walkify calls this hook only if it is available when cuurent view is been removed.
 
 
-<h2>#redirection</h2>
+<h2 id="redirection">#redirection</h2>
 there are two types of redirection in walkify
 <br>
-<b>-route redirection : </b> this is also known as full page redirection becose it redirects fully thereby changing the url in the address bar. use <b>router.routeTo(routename)</b> to perform this type of redirection.
+<b>-route redirection : </b> this is also known as full page redirection becose it redirects fully thereby changing the url in the address bar. use <b>router.routeTo(routename, stateObject?)</b> to perform this type of redirection.
 
 <br>
 <pre class="prettyprint linenums bg-code">
-    router.routeTo('/admin/login');
+    router.routeTo('/admin/login', {'data' : 'user'});
+    //the state object can be accessed from matched hook as response.state.data
+    '/admin/login' : {
+        matched(resp){
+            //console.log(resp.state.data);
+        }
+    }
 </pre>
 <!-- <img class="img code-img" src="assets/img/redirection1.png"><br> -->
 
@@ -378,7 +385,7 @@ the data parameter if passed will be used instead of the data in the specified r
 </pre>
 
 
-<h2>#404 page</h2>
+<h2 id="s404">#404 page</h2>
 
 to register a 404 page using external template, simple add a property '!' in your routes object e.get
 <br>
@@ -396,7 +403,7 @@ to register a 404 page using external template, simple add a property '!' in you
 
 walkify looks for this and redirect none registered views to it. in a situation where by 404 is not registered it will simply ignore
 
-<h2>#misc</h2>
+<h2 id="misc">#misc</h2>
     <b> -render </b> : this method is similiar to 'this.view' method that is available in matched hook, except that it is not limited to matched hook only. it can be called from any scope to render a string to the root view element or any element. it also accepts an optional third argument which determine the element to render the string to and uses 'querySelector' to look up the element.
     <pre class="prettyprint linenums bg-code">
         //rendering to the root view element
@@ -411,14 +418,27 @@ walkify looks for this and redirect none registered views to it. in a situation 
     <b>-route</b> : this method re-renders the current view
     <pre class="prettyprint linenums bg-code">
         //re-renders the current page without browser reload
-        router.route();
+        router.route(stateObject?);
         //equivalent to
-        router.routeTo(router.getHash());
+        router.routeTo(router.getHash(), stateObject?);
     </pre>
     <br>
     <b> -currentResponseObject  </b> : returns the response Object from any scope
     <pre class="prettyprint linenums bg-code">
         let responseObject = router.currentResponseObject;
+    </pre>
+    <br>
+    <b> -setOptions  </b> : accepts properties that changes some default app settings.
+    <ol>
+        <li>
+            <b> - historyMode </b> : accepts boolean values indicating whether your url should be hashed based or history.pushState based. the default value is false, which indicates hash routing.
+        </li>
+    </ol>
+    <pre class="prettyprint linenums bg-code">
+        //changes the app url from hash routing to be using history.pushState
+        router.setOptions({
+            historyMode : true
+        })
     </pre>
     <br>
     <b>- setPrefix : </b> this changes/removes the default dollar sign to any symbol passed or removes it if false or empty string is passed
@@ -441,3 +461,4 @@ walkify looks for this and redirect none registered views to it. in a situation 
 
         router.mount('.app');
     </pre>
+</div>

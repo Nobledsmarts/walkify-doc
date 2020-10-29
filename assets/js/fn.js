@@ -3,7 +3,7 @@ let toTopCont = d.querySelector('.back-to-top');
 toTopCont.querySelector('.back-to-top-txt').addEventListener('click', (e) => {
     __top();
 });
-window.addEventListener('scroll', function(){
+window.addEventListener('scroll', () => {
     if(window.pageYOffset  > d.documentElement.clientHeight){
         toTopCont.classList.add('show');
     }
@@ -11,6 +11,10 @@ window.addEventListener('scroll', function(){
         toTopCont.classList.remove('show');
     }
 });
+window.addEventListener('load', () => {
+    addTogglerEvent();
+    doSectionLinks();
+})
 function showLoader(){
     d.querySelector('.loader-container').classList.remove('hide');
 }
@@ -61,4 +65,45 @@ function doTypingEffect(descIdx, textIdx, isNegated){
         }
         descIdx = descIdx == descLen ? 0 : descIdx;
     }, interval);
+}
+function toSection(sectionId){
+    let elem = d.querySelector('#' + sectionId);
+    if(elem) elem.scrollIntoView();
+}
+function addTogglerEvent(){
+    let toggler = d.querySelector('.toggler-block');
+    toggler.addEventListener('click', () => {
+        toggleNav();
+    });
+}
+function toggleNav(){
+    let navList = d.querySelector('.nav-item-cont');
+    if(navList.classList.contains('nav-open')){
+        navList.classList.remove('nav-open');
+        return;
+    }
+    navList.classList.add('nav-open');
+}
+function doSectionLinks(){
+    let sessionLinks = [... d.querySelectorAll('a.section-to')];
+    sessionLinks.forEach((link) => {
+        link.addEventListener('click', () => {
+            toggleNav();
+            if(link.dataset.to){
+                routeTosection(link);
+            } else {
+                router.routeTo(link.getAttribute('href'));
+            }
+        });
+    });
+}
+function routeTosection(link){
+    let responseObject = router.currentResponseObject();
+    let currentPath = responseObject.url.path;
+    let scrollElement = link.dataset.to;
+    if(currentPath !== '/docs'){
+        router.routeTo('/docs', {scrollElement});
+    } else {
+        router.route({scrollElement});
+    }
 }
