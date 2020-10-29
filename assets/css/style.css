@@ -287,7 +287,7 @@ header{
     }
     .nav-item-cont{
         flex-basis: 100%;
-        margin-top: -200%;
+        margin-top: -500%;
         height: 0px;
         background : #9c27b0;
         transition: all 1s ease;
@@ -302,7 +302,7 @@ header{
     }  
     @keyframes shownav{
         0% {
-            margin-top: -100%;
+            margin-top: -500%;
         }
         100%{
             margin-top: 0%;
@@ -313,7 +313,7 @@ header{
              margin-top: 0%;
         }
         100%{
-            margin-top: -200%;
+            margin-top: -500%;
         }
     }
     .nav-item{
